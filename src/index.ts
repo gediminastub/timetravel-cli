@@ -26,20 +26,42 @@ const copyDirectories = (source, destination) => {
     return true;
 }
 
-const deleteAllExcept = (dir: string, fileName: string) => {
-    fs.readdir(dir, (err, files) => {
-        if (err) {
-            console.log(err);
+const deleteAllExcept = (dir: string, fileNames: string[]) => {
+    console.log('1')
+    // fs.readdir(dir, (err, files) => {
+    //     console.log('2')
+    //     if (err) {
+    //         console.log(err);
+    //     }
+    //
+    //     files.forEach(file => {
+    //         console.log('3')
+    //         console.log(file);
+    //         const fileDir = path.join(dir, file);
+    //
+    //         if (!fileNames.includes(file)) {
+    //             try {
+    //                 console.log('7')
+    //                 fs.rmSync(fileDir, { recursive: true, force: true });
+    //                 console.log('9')
+    //             } catch (e) {}
+    //         }
+    //     });
+    // });
+
+    const files = fs.readdirSync(dir);
+    files.forEach(file => {
+        console.log('3')
+        console.log(file);
+        const fileDir = path.join(dir, file);
+
+        if (!fileNames.includes(file)) {
+            try {
+                console.log('7')
+                fs.rmSync(fileDir, { recursive: true, force: true });
+                console.log('9')
+            } catch (e) {}
         }
-
-        files.forEach(file => {
-            console.log(file);
-            const fileDir = path.join('./', file);
-
-            if (file !== fileName) {
-                fs.unlinkSync(fileDir);
-            }
-        });
     });
 }
 
@@ -47,7 +69,9 @@ const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 const pushChanges = async (dir: string, branch: string, time: Date) => {
     // fs.cpSync(path.join(process.cwd()), dir, {recursive: true});
-    deleteAllExcept(dir, '.git');
+    console.log('DIRAS', dir);
+    deleteAllExcept(dir, ['.git', '.gitignore', '.idea']);
+    console.log('4 copy dir starts')
     copyDirectories(path.join(process.cwd()), dir)
 
     const repo = {
@@ -117,7 +141,7 @@ export async function record(params: Params): Promise<{ message: string }> {
     while (true) {
         console.log('PING', time.getMinutes());
         await pushChanges(dir, branch, time);
-        await sleep(5000)
+        await sleep(15000)
         time.setMinutes(time.getMinutes() + 1);
     }
 }
