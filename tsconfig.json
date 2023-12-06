@@ -3,7 +3,17 @@
     "rootDir": "src",
     "outDir": "dist",
     "module": "commonjs",
+    "skipLibCheck": true,
     "target": "es6",
-    "esModuleInterop": true
-  }
+    "esModuleInterop": true,
+  },
+  "files.exclude": {
+    "**/node_modules": true
+  },
+  "exclude": [
+    "node_modules",
+    "./node_modules",
+    "./node_modules/*",
+    "./node_modules/@types/node/index.d.ts",
+  ]
 }

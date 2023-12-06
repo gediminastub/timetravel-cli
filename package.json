@@ -24,13 +24,15 @@
     "bundle": "npm run build && pkg . --out-dir ./exec/"
   },
   "devDependencies": {
+    "@types/node": "^20.10.3",
     "ava": "^2.2.0",
     "pkg": "^4.4.0",
     "rimraf": "^2.6.3",
     "ts-node": "^8.3.0",
-    "typescript": "^3.5.3"
+    "typescript": "^5.3.2"
   },
   "dependencies": {
-    "commander": "^2.20.0"
+    "commander": "^2.20.0",
+    "isomorphic-git": "^1.25.0"
   }
 }

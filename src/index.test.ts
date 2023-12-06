@@ -1,6 +1,6 @@
 import test from 'ava'
 
-import {orderPizza} from './index'
+import {record} from './index'
 
 test.before(async t => {
     console.log('Starting tests!')
@@ -8,11 +8,8 @@ test.before(async t => {
 
 test('can order a pizza', async t => {
 
-    let result = await orderPizza({
-        peppers: false,
-        pineapple: false,
-        bbqSauce: false,
-        cheeseType: 'swiss'
+    let result = await record({
+        gitUrl: 'swiss'
     })
 
     t.true(result.message.includes('you ordered a pizza'))
