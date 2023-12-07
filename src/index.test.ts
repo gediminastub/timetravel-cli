@@ -9,7 +9,8 @@ test.before(async t => {
 test('can order a pizza', async t => {
 
     let result = await record({
-        gitUrl: 'swiss'
+        gitUrl: 'swiss',
+        branch: 't'
     })
 
     t.true(result.message.includes('you ordered a pizza'))

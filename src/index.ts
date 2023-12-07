@@ -5,20 +5,21 @@ import http from 'isomorphic-git/http/node';
 import path from "path";
 
 export interface Params {
-    gitUrl: string
+    gitUrl: string,
+    branch: string
 }
 
 const copyDirectories = (source, destination) => {
-    fs.readdirSync(source,{withFileTypes: true}).filter(
+    fs.readdirSync(source, {withFileTypes: true}).filter(
         (entry) => {
             const fullsrc = path.resolve(source + path.sep + entry.name);
-            const fulldest= path.resolve(destination + path.sep + entry.name);
+            const fulldest = path.resolve(destination + path.sep + entry.name);
             if (entry.name == '.git' || entry.name == 'node_modules' || entry.name == 'dist' || entry.name == '.idea' || entry.name == 'src') {
                 return true;
             }
-            if(entry.isDirectory && fullsrc !== destination)
+            if (entry.isDirectory && fullsrc !== destination)
                 fse.copySync(fullsrc, fulldest);
-            else if(!entry.isDirectory)
+            else if (!entry.isDirectory)
                 fs.copyFileSync(fullsrc, fulldest);
             return true;
         }
@@ -27,40 +28,15 @@ const copyDirectories = (source, destination) => {
 }
 
 const deleteAllExcept = (dir: string, fileNames: string[]) => {
-    console.log('1')
-    // fs.readdir(dir, (err, files) => {
-    //     console.log('2')
-    //     if (err) {
-    //         console.log(err);
-    //     }
-    //
-    //     files.forEach(file => {
-    //         console.log('3')
-    //         console.log(file);
-    //         const fileDir = path.join(dir, file);
-    //
-    //         if (!fileNames.includes(file)) {
-    //             try {
-    //                 console.log('7')
-    //                 fs.rmSync(fileDir, { recursive: true, force: true });
-    //                 console.log('9')
-    //             } catch (e) {}
-    //         }
-    //     });
-    // });
-
     const files = fs.readdirSync(dir);
     files.forEach(file => {
-        console.log('3')
-        console.log(file);
         const fileDir = path.join(dir, file);
 
         if (!fileNames.includes(file)) {
             try {
-                console.log('7')
-                fs.rmSync(fileDir, { recursive: true, force: true });
-                console.log('9')
-            } catch (e) {}
+                fs.rmSync(fileDir, {recursive: true, force: true});
+            } catch (e) {
+            }
         }
     });
 }
@@ -68,10 +44,7 @@ const deleteAllExcept = (dir: string, fileNames: string[]) => {
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 const pushChanges = async (dir: string, branch: string, time: Date) => {
-    // fs.cpSync(path.join(process.cwd()), dir, {recursive: true});
-    console.log('DIRAS', dir);
     deleteAllExcept(dir, ['.git', '.gitignore', '.idea']);
-    console.log('4 copy dir starts')
     copyDirectories(path.join(process.cwd()), dir)
 
     const repo = {
@@ -83,12 +56,12 @@ const pushChanges = async (dir: string, branch: string, time: Date) => {
     await git.statusMatrix(repo).then((status) =>
         Promise.all(
             status.map(([filepath, , worktreeStatus]) =>
-                worktreeStatus ? git.add({ ...repo, filepath }) : git.remove({ ...repo, filepath })
+                worktreeStatus ? git.add({...repo, filepath}) : git.remove({...repo, filepath})
             )
         ));
 
 
-    const ats = await git.commit({
+    await git.commit({
         fs,
         dir,
         author: {
@@ -98,30 +71,26 @@ const pushChanges = async (dir: string, branch: string, time: Date) => {
         message: `CodeTimeTravel ${time.getHours()}:${time.getMinutes()}`
     })
 
-    console.log('ats', ats);
-
-    let pushResult = await git.push({
+    await git.push({
         fs,
         http,
         dir,
         remote: 'origin',
         ref: branch,
-        onAuth: () => ({ username: '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' }),
-        // onAuth: () => ({ username: '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' }),
+        onAuth: () => ({username: process.env.GITHUB_TOKEN}),
     })
 }
 
 export async function record(params: Params): Promise<{ message: string }> {
     const dir = path.join(process.cwd(), 'test-clone')
-    // const url = params.gitUrl;
-    const url = 'https://github.com/gediminastub/timetravel-test';
-    const branch = 'test';
+    const url = params.gitUrl;
+    const branch = params.branch;
 
     await git.clone({
         fs,
         http,
         dir,
-        url: url,
+        url,
     });
 
     // const files = await git.listFiles({ fs, dir, ref: branch });

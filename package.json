@@ -33,6 +33,7 @@
   },
   "dependencies": {
     "commander": "^2.20.0",
+    "dotenv": "^16.3.1",
     "isomorphic-git": "^1.25.0"
   }
 }
