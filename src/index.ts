@@ -93,24 +93,26 @@ export async function record(params: Params): Promise<{ message: string }> {
         url,
     });
 
-    // const files = await git.listFiles({ fs, dir, ref: branch });
-    // for (const filepath of files) {
-    //     await git.resetIndex({ fs, dir, filepath })
-    // }
-
-    await git.checkout({
+    await git.branch({
         fs,
         dir,
         force: true,
         ref: branch
     })
 
+    // await git.checkout({
+    //     fs,
+    //     dir,
+    //     force: true,
+    //     ref: branch
+    // })
+
     const time = new Date(0, 0, 0, 0, 0, 0, 0);
 
     while (true) {
         console.log('PING', time.getMinutes());
         await pushChanges(dir, branch, time);
-        await sleep(15000)
+        await sleep(5000)
         time.setMinutes(time.getMinutes() + 1);
     }
 }
