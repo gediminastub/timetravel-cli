@@ -61,9 +61,10 @@ const pushChanges = async (dir: string, branch: string, time: Date) => {
         ));
 
 
-    await git.commit({
+    const commitResp = await git.commit({
         fs,
         dir,
+        ref: `refs/heads/${branch}`,
         author: {
             name: 'Gediminas Tubelevicius',
             email: 'gtubelevicius@gmail.com',
@@ -71,7 +72,9 @@ const pushChanges = async (dir: string, branch: string, time: Date) => {
         message: `CodeTimeTravel ${time.getHours()}:${time.getMinutes()}`
     })
 
-    await git.push({
+    console.log(commitResp)
+
+    const pushResp = await git.push({
         fs,
         http,
         dir,
@@ -79,6 +82,8 @@ const pushChanges = async (dir: string, branch: string, time: Date) => {
         ref: branch,
         onAuth: () => ({username: process.env.GITHUB_TOKEN}),
     })
+
+    console.log('pushResp.ok', pushResp);
 }
 
 export async function record(params: Params): Promise<{ message: string }> {
@@ -93,6 +98,7 @@ export async function record(params: Params): Promise<{ message: string }> {
         url,
     });
 
+    //TODO unsafe, fix
     await git.branch({
         fs,
         dir,
@@ -103,7 +109,6 @@ export async function record(params: Params): Promise<{ message: string }> {
     // await git.checkout({
     //     fs,
     //     dir,
-    //     force: true,
     //     ref: branch
     // })
 
@@ -112,6 +117,7 @@ export async function record(params: Params): Promise<{ message: string }> {
     while (true) {
         console.log('PING', time.getMinutes());
         await pushChanges(dir, branch, time);
+        console.log('Pushed');
         await sleep(5000)
         time.setMinutes(time.getMinutes() + 1);
     }
