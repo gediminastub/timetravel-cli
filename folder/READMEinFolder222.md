@@ -1,7 +1,8 @@
-# A VERY POC of CodeTimeTravel tool for educators to record rewindable project state making it easier for students to go back, copy, play around, and hopefully have less course drop-outs along the way
+# A VERY POC of CodeTimeTravel tool for educators to record rewindable project state making it easier for students to go back, copy,
+# play around, and hopefully have less course drop-outs along the way  
 
-### UI URL Example: https://timetravel-pearl.vercel.app/viewer?url=https://github.com/gediminastub/timetravel-files&branch=test1
-### Pattern: https://timetravel-pearl.vercel.app/viewer?url="GITHUB_REPO_HTTP_URL"&branch="RECORDED_BRANCH_NAME"
+### UI URL:
+### UI URL:
 
 ## Usage
 
@@ -9,9 +10,7 @@
 ## yarn dev -u https://github.com/gediminastub/timetravel-files -b test1
 ## -u GitHub public repo URL
 ## -b repo branch
-## +create a .env file from "env_example" and add Your GitHub token (should have "content" rights as "write") to GITHUB_TOKEN variable
-
-## Usage
+## +create a .env file from "env_example" and add Your GitHub token (should have "content" rights as "write") to GITHUB_TOKEN variable 
 
 ### **dev**
 

@@ -78,6 +78,7 @@ const pushChanges = async (dir: string, branch: string, time: Date) => {
         fs,
         http,
         dir,
+        force: true,
         remote: 'origin',
         ref: branch,
         onAuth: () => ({username: process.env.GITHUB_TOKEN}),
@@ -102,10 +103,13 @@ export async function record(params: Params): Promise<{ message: string }> {
     await git.branch({
         fs,
         dir,
+        checkout: true,
         force: true,
         ref: branch
     })
 
+    //TODO if branch exists - just checkout. Add options to not override branch
+    //
     // await git.checkout({
     //     fs,
     //     dir,
